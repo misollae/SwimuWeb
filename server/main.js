@@ -12,7 +12,7 @@ const serialPort = new SerialPort({path: 'COM10', baudRate: 9600 }, function (er
   }
 })
 
-function showList() {
+function getFileList() {
   serialPort.write('Show file list', function(err) {
     if (err) {
       return console.log('Error on write: ', err.message)
@@ -20,13 +20,18 @@ function showList() {
     console.log('Write // Asked for file list.')
   })
   
-  let fileList = ""
+  let fileList = {}
   serialPort.on('data', function(data) {
     let message = data.toString()
-  
+
     if (message.localeCompare("End of list") != 0 ) 
-    {
-      fileList += message;
+    { 
+      let comps = message.split(" - ")
+      if (comps.length == 2) {
+        let fileNum  = comps[0].trim().replace(/\s+/g, '')
+        let fileDate = comps[1].trim().replace(/\s+/g, '')
+        fileList[fileNum] = fileDate
+      }
     } 
     else 
     {
@@ -37,12 +42,13 @@ function showList() {
         console.log('Serial port closed.')
       })
   
-      console.log(fileList)
+     // console.log(fileList)
+      return fileList
     }
   })
 }
 
-showList()
+//getFileList()
 
 server.post('/SwimuWeb', jsonParser, (req, res) => {
   sendFileRequest(req.body.file_name)
@@ -56,6 +62,11 @@ function sendFileRequest(fileName) {
       return console.log('Error on write: ', err.message)
     }
     console.log('Asked for file')
+  })
+
+  serialPort.on('data', function(data) {
+    let message = data.toString()
+    console.log(message)
   })
 }
 
