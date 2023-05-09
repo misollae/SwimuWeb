@@ -1,17 +1,14 @@
+function requestFile(file_name) {
+  let payload = { file_name: file_name };
 
-function requestFile(){
-    console.log('Hi')
-    let file_name = document.getElementById('file_name').value
-    let payload = { file_name : file_name }
-
-    fetch('http://localhost:3000/SwimuWeb', {
-      method: "POST",
-      headers: {
-        Accept: 'application.json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(payload)
-      })
+  fetch("http://localhost:3000/SwimuWeb", {
+    method: "POST",
+    headers: {
+      Accept: "application.json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
 }
 function showList() {
  fetch("http://localhost:3000/SwimuWeb/FileList", {
@@ -32,9 +29,5 @@ function showList() {
       button.onclick = handleClick;
       document.body.appendChild(button);
     }
-  }
-    
-    )
-  .catch(error => console.log(error));
+  }).catch(error => console.log(error));
 }
-
