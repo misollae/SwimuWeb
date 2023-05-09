@@ -49,5 +49,19 @@ function requestFileWithRetry(file_name) {
     },
     body: JSON.stringify({ file_name: file_name }),
   };
-  retryFetch(endpoint, options);
+  retryFetch(endpoint, options)
+    .then(response => response.json())
+    .then(data => {
+      for (const num in data) {
+        const date = data[num];
+        let button = document.createElement("button");
+        button.textContent = date;
+        function handleClick() {
+          requestFileWithRetry(num); // modify this line
+        }
+        button.onclick = handleClick;
+        document.body.appendChild(button);
+      }
+    })
+    .catch(error => console.log(error));
 }

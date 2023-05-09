@@ -24,7 +24,6 @@ server.get("/SwimuWeb/FileList", jsonParser, (req, res) => {
   });
 
   let fileList = {};
-
   serialPort.addListener("data", function (data) {
     let message = data.toString();
     if (message.localeCompare("End of list") != 0) {
@@ -32,11 +31,9 @@ server.get("/SwimuWeb/FileList", jsonParser, (req, res) => {
       if (comps.length == 2) {
         let fileNum  = comps[0].trim().replace(/\s+/g, " ");
         let fileDate = comps[1].trim().replace(/\s+/g, " ");
-        console.log(fileNum);
         fileList[fileNum] = fileDate;
       }
     } else {
-      console.log("Remove listener")
       serialPort.removeAllListeners()
       res.setHeader("Content-Type", "application/json");
       res.send(JSON.stringify(fileList));
@@ -45,7 +42,8 @@ server.get("/SwimuWeb/FileList", jsonParser, (req, res) => {
 });
 
 function sendFileRequest(fileName) {
-  console.log(fileName);
+  serialPort.removeAllListeners()
+
   serialPort.write(fileName, function (err) {
     if (err) {
       return console.log("Error on write: ", err.message);
