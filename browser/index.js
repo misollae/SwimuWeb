@@ -1,31 +1,33 @@
-function retryFetch(endpoint, options, retries = 3, delay = 1000) {
-  function makeRequest() {
-    fetch(endpoint, options)
-      .then(response => {
-        if (response.ok) {
-          return response.json();
-        } else {
-          throw new Error(response.statusText);
-        }
-      })
-      .then(data => {
-        console.log(data);
-      })
-      .catch(error => {
-        console.error(`Failed to fetch ${endpoint}. Retrying in ${delay}ms...`);
-        if (retries > 0) {
-          setTimeout(makeRequest, delay);
-          retries--;
-        } else {
-          console.error(`Failed to fetch ${endpoint} after ${retries} retries.`, error);
-        }
-      });
-  }
+function retryFetch(endpoint, options, retries = 20, delay = 10000) {
+  return new Promise((resolve, reject) => {
+    function makeRequest() {
+      fetch(endpoint, options)
+        .then(response => {
+          if (response.ok) {
+            return response.json();
+          } else {
+            throw new Error(response.statusText);
+          }
+        })
+        .then(data => {
+          console.log(data);
+          resolve(data);
+        })
+        .catch(error => {
+          console.error(`Failed to fetch ${endpoint}. Retrying in ${delay}ms...`);
+          if (retries > 0) {
+            setTimeout(makeRequest, delay);
+            retries--;
+          } else {
+            console.error(`Failed to fetch ${endpoint} after ${retries} retries.`, error);
+            reject(error);
+          }
+        });
+    }
 
-  makeRequest();
+    makeRequest();
+  });
 }
-
-
 
 function showListWithRetry() {
   const endpoint = "http://localhost:3000/SwimuWeb/FileList";
@@ -36,8 +38,33 @@ function showListWithRetry() {
       "Content-Type": "application/json",
     },
   };
-  retryFetch(endpoint, options);
+  retryFetch(endpoint, options).then(data => {
+    for (const num in data) {
+      const value = data[num];
+      let button = document.createElement("button");
+      button.textContent = formatPath(value);
+      function handleClick() {
+        requestFileWithRetry(value); // modify this line
+      }
+      button.onclick = handleClick;
+      document.body.appendChild(button);
+    }
+  })
+  .catch(error => console.log(error));
 }
+
+  function formatPath(path) {
+    path = path.substring(1);
+
+    var dateString = path.substring(0, 8);
+    var timeString = path.substring(9);
+
+    var formattedString = dateString.substring(0, 4) + "-" + dateString.substring(4, 6) + "-" + dateString.substring(6);
+    formattedString += " ";
+    formattedString += timeString.substring(0, 2) + ":" + timeString.substring(2, 4) + ":" + timeString.substring(4);
+
+    return formattedString;
+  }
 
 function requestFileWithRetry(file_name) {
   const endpoint = "http://localhost:3000/SwimuWeb";
@@ -49,19 +76,6 @@ function requestFileWithRetry(file_name) {
     },
     body: JSON.stringify({ file_name: file_name }),
   };
+
   retryFetch(endpoint, options)
-    .then(response => response.json())
-    .then(data => {
-      for (const num in data) {
-        const date = data[num];
-        let button = document.createElement("button");
-        button.textContent = date;
-        function handleClick() {
-          requestFileWithRetry(num); // modify this line
-        }
-        button.onclick = handleClick;
-        document.body.appendChild(button);
-      }
-    })
-    .catch(error => console.log(error));
 }

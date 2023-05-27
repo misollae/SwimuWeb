@@ -14,8 +14,8 @@ server.post("/SwimuWeb", jsonParser, (req, res) => {
 });
 
 server.get("/SwimuWeb/FileList", jsonParser, (req, res) => {
-  serialPort.removeAllListeners()
-  
+  serialPort.removeAllListeners();
+
   serialPort.write("Show file list", function (err) {
     if (err) {
       return console.log("Error on write: ", err.message);
@@ -23,18 +23,25 @@ server.get("/SwimuWeb/FileList", jsonParser, (req, res) => {
     console.log("Asked for file list.");
   });
 
-  let fileList = {};
+  let fileList = [];
+
+  const timeoutNoResponse = setTimeout(() => {
+    serialPort.removeAllListeners();
+    res.status(500).send("Server Error Response");
+  }, 5000);
+
   serialPort.addListener("data", function (data) {
     let message = data.toString();
     if (message.localeCompare("End of list") != 0) {
-      let comps = message.split(" - ");
-      if (comps.length == 2) {
-        let fileNum  = comps[0].trim().replace(/\s+/g, " ");
-        let fileDate = comps[1].trim().replace(/\s+/g, " ");
-        fileList[fileNum] = fileDate;
-      }
+      messages = message.split('\r\n')
+      messages.forEach(m => {
+        m = m.trim().replace(/\s+/g, " ");
+        if (m != "" && m != "Files:") fileList.push(m)
+      });
+      console.log(message);
     } else {
-      serialPort.removeAllListeners()
+      serialPort.removeAllListeners();
+      clearTimeout(timeoutNoResponse);
       res.setHeader("Content-Type", "application/json");
       res.send(JSON.stringify(fileList));
     }
@@ -42,16 +49,16 @@ server.get("/SwimuWeb/FileList", jsonParser, (req, res) => {
 });
 
 function sendFileRequest(fileName) {
-  serialPort.removeAllListeners()
+  serialPort.removeAllListeners();
 
   serialPort.write(fileName, function (err) {
     if (err) {
       return console.log("Error on write: ", err.message);
     }
-    console.log("Asked for file");
+    console.log("File request " + fileName);
   });
 
-  serialPort.on("data", function (data) {
+  serialPort.addListener("data", function (data) {
     let message = data.toString();
     console.log(message);
   });
