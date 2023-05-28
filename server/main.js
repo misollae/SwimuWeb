@@ -11,7 +11,7 @@ import { SerialPort } from "serialport";
 const serialPort = new SerialPort({ path: "COM10", baudRate: 9600 });
 
 server.post("/SwimuWeb", jsonParser, (req, res) => {
-  sendFileRequest(req.body.file_name);
+  sendSerialFileRequest(req.body.file_name);
   res.send();
 });
 
@@ -44,15 +44,15 @@ server.get("/SwimuWeb/FileList", jsonParser, (req, res) => {
       clearTimeout(timeoutNoResponse);
       res.setHeader("Content-Type", "application/json");
       res.send(JSON.stringify(fileList));
-      transferFilesSequentially(fileList);
+      transferFilesSequentiallyArduino(fileList);
     }
   });
 });
 
-async function transferFilesSequentially(fileList) {
+async function transferFilesSequentiallyArduino(fileList) {
   for (const fileName of fileList) {
     try {
-      await sendFileRequest(fileName);
+      await sendSerialFileRequest(fileName);
       console.log("File transferred successfully: " + fileName);
     } catch (error) {
       console.log("Error occurred during file transfer: ", error);
@@ -63,7 +63,7 @@ async function transferFilesSequentially(fileList) {
 }
 
 
-function sendFileRequest(fileName) {
+function sendSerialFileRequest(fileName) {
   return new Promise((resolve, reject) => {
     serialPort.removeAllListeners();
 
