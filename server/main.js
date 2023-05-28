@@ -44,28 +44,47 @@ server.get("/SwimuWeb/FileList", jsonParser, (req, res) => {
       clearTimeout(timeoutNoResponse);
       res.setHeader("Content-Type", "application/json");
       res.send(JSON.stringify(fileList));
+      transferFilesSequentially(fileList);
     }
   });
 });
 
-function sendFileRequest(fileName) {
-  serialPort.removeAllListeners();
+async function transferFilesSequentially(fileList) {
+  for (const fileName of fileList) {
+    try {
+      await sendFileRequest(fileName);
+      console.log("File transferred successfully: " + fileName);
+    } catch (error) {
+      console.log("Error occurred during file transfer: ", error);
+      break; // Stop transferring files if an error occurs
+    }
+  }
+  console.log("All files transferred successfully");
+}
 
-  serialPort.write(fileName, function (err) {
-    if (err) {
-      return console.log("Error on write: ", err.message);
-    }
-    console.log("File request " + fileName);
-  });
-  var conteudo = "";
-  serialPort.addListener("data", function (data) {
-    let message = data.toString();
-    if (message.includes("End of file")) {
-      saveToServer(fileName.replace("/","") + ".txt", conteudo);
-      serialPort.removeAllListeners();
-    } else { 
-      conteudo += message.trim().replace(/\s+/g, " ") + "\n";
-    }
+
+function sendFileRequest(fileName) {
+  return new Promise((resolve, reject) => {
+    serialPort.removeAllListeners();
+
+    serialPort.write(fileName, function (err) {
+      if (err) {
+        console.log("Error on write: ", err.message);
+        reject(err);
+      } else {
+        var content = "";
+        serialPort.addListener("data", function (data) {
+          let message = data.toString();
+          if (message.includes("End of file")) {
+            saveToServer(fileName.replace(/\//g, "") + ".txt", content);
+            serialPort.removeAllListeners();
+            resolve();
+          } else {
+            content += message.trim().replace(/\s+/g, " ") + "\n";
+          }
+        });
+      }
+    });
   });
 }
 
