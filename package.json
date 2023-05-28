@@ -2,7 +2,7 @@
   "name": "aws-sdk-v3-iam-examples",
   "version": "1.0.0",
   "main": "index.js",
-   "type": "module",
+  "type": "module",
   "scripts": {
     "start": "nodemon ./server/main.js"
   },
@@ -14,5 +14,5 @@
   },
   "devDependencies": {
     "nodemon": "^2.0.22"
-  } 
+  }
 }
