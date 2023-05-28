@@ -1,9 +1,12 @@
-function retryFetch(endpoint, options, retries = 20, delay = 10000) {
+function retryFetch(endpoint, options, retries = 20, delay = 5000) {
+  let responseReceived = false; 
+
   return new Promise((resolve, reject) => {
     function makeRequest() {
       fetch(endpoint, options)
         .then(response => {
           if (response.ok) {
+            responseReceived = true; 
             return response.json();
           } else {
             throw new Error(response.statusText);
@@ -15,9 +18,11 @@ function retryFetch(endpoint, options, retries = 20, delay = 10000) {
         })
         .catch(error => {
           console.error(`Failed to fetch ${endpoint}. Retrying in ${delay}ms...`);
-          if (retries > 0) {
+          if (retries > 0 && !responseReceived) { 
             setTimeout(makeRequest, delay);
             retries--;
+          } else if (responseReceived) {
+            console.log(`Response received for ${endpoint}.`);
           } else {
             console.error(`Failed to fetch ${endpoint} after ${retries} retries.`, error);
             reject(error);
@@ -28,6 +33,7 @@ function retryFetch(endpoint, options, retries = 20, delay = 10000) {
     makeRequest();
   });
 }
+
 
 function showListWithRetry() {
   const endpoint = "http://localhost:3000/SwimuWeb/FileList";
@@ -44,7 +50,7 @@ function showListWithRetry() {
       let button = document.createElement("button");
       button.textContent = formatPath(value);
       function handleClick() {
-        requestFileWithRetry(value); // modify this line
+        requestFileWithRetry(value); 
       }
       button.onclick = handleClick;
       document.body.appendChild(button);

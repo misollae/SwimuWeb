@@ -1,10 +1,12 @@
-const express = require("express");
-var bodyParser = require("body-parser");
+import { saveToServer } from "./aws-utils.js";
+import express from "express";
+import bodyParser from "body-parser";
 const server = express();
-var jsonParser = bodyParser.json();
+const jsonParser = bodyParser.json();
 const port = 3000;
-const http = require("http").Server(server);
-const { SerialPort } = require("serialport");
+import { createServer } from "http";
+const http = createServer(server);
+import { SerialPort } from "serialport";
 
 const serialPort = new SerialPort({ path: "COM10", baudRate: 9600 });
 
@@ -15,7 +17,6 @@ server.post("/SwimuWeb", jsonParser, (req, res) => {
 
 server.get("/SwimuWeb/FileList", jsonParser, (req, res) => {
   serialPort.removeAllListeners();
-
   serialPort.write("Show file list", function (err) {
     if (err) {
       return console.log("Error on write: ", err.message);
@@ -33,12 +34,11 @@ server.get("/SwimuWeb/FileList", jsonParser, (req, res) => {
   serialPort.addListener("data", function (data) {
     let message = data.toString();
     if (message.localeCompare("End of list") != 0) {
-      messages = message.split('\r\n')
+      var messages = message.split('\r\n')
       messages.forEach(m => {
         m = m.trim().replace(/\s+/g, " ");
         if (m != "" && m != "Files:") fileList.push(m)
       });
-      console.log(message);
     } else {
       serialPort.removeAllListeners();
       clearTimeout(timeoutNoResponse);
@@ -57,10 +57,15 @@ function sendFileRequest(fileName) {
     }
     console.log("File request " + fileName);
   });
-
+  var conteudo = "";
   serialPort.addListener("data", function (data) {
     let message = data.toString();
-    console.log(message);
+    if (message.includes("End of file")) {
+      saveToServer(fileName.replace("/","") + ".txt", conteudo);
+      serialPort.removeAllListeners();
+    } else { 
+      conteudo += message.trim().replace(/\s+/g, " ") + "\n";
+    }
   });
 }
 
