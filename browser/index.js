@@ -34,8 +34,8 @@ function retryFetch(endpoint, options, retries = 20, delay = 5000) {
   });
 }
 
-
-function showListWithRetry() {
+// Mudar para a Cloud
+/* function showListWithRetry() {
   const endpoint = "http://localhost:3000/SwimuWeb/FileList";
   const options = {
     method: "GET",
@@ -57,20 +57,8 @@ function showListWithRetry() {
     }
   })
   .catch(error => console.log(error));
-}
+} */
 
-  function formatPath(path) {
-    path = path.substring(1);
-
-    var dateString = path.substring(0, 8);
-    var timeString = path.substring(9);
-
-    var formattedString = dateString.substring(0, 4) + "-" + dateString.substring(4, 6) + "-" + dateString.substring(6);
-    formattedString += " ";
-    formattedString += timeString.substring(0, 2) + ":" + timeString.substring(2, 4) + ":" + timeString.substring(4);
-
-    return formattedString;
-  }
 
 function requestFileWithRetry(file_name) {
   const endpoint = "http://localhost:3000/SwimuWeb";

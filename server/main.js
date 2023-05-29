@@ -1,4 +1,4 @@
-import { saveToServer } from "./aws-utils.js";
+import { saveToServer, getFromServer } from "./aws-utils.js";
 import express from "express";
 import bodyParser from "body-parser";
 const server = express();
@@ -8,14 +8,37 @@ import { createServer } from "http";
 const http = createServer(server);
 import { SerialPort } from "serialport";
 
-const serialPort = new SerialPort({ path: "COM10", baudRate: 9600 });
+async function checkPortConnection(portName) {
+  return new Promise((resolve, reject) => {
+    SerialPort.list().then((ports) => {
+      const connectedPort = ports.find((port) => port.path === portName);
+      if (connectedPort) {
+        resolve(true);
+      } else {
+        resolve(false); 
+      }
+    }).catch((err) => {
+      reject(err);
+    });
+  });
+}
 
-server.post("/SwimuWeb", jsonParser, (req, res) => {
-  sendSerialFileRequest(req.body.file_name);
-  res.send();
-});
+let serialPort = null;
+async function monitorPortConnection() {
+  checkPortConnection('COM10').then((connected) => {
+    if (connected) {
+      clearInterval(connectionInterval);
+      serialPort = new SerialPort({ path: "COM10", baudRate: 9600 });
+      getSerialFileList();
+    }
+  }).catch((err) => {
+    console.error('Error:', err.message);
+  });
+}
 
-server.get("/SwimuWeb/FileList", jsonParser, (req, res) => {
+const connectionInterval = setInterval(monitorPortConnection, 5000);
+
+function getSerialFileList() {
   serialPort.removeAllListeners();
   serialPort.write("Show file list", function (err) {
     if (err) {
@@ -25,12 +48,6 @@ server.get("/SwimuWeb/FileList", jsonParser, (req, res) => {
   });
 
   let fileList = [];
-
-  const timeoutNoResponse = setTimeout(() => {
-    serialPort.removeAllListeners();
-    res.status(500).send("Server Error Response");
-  }, 5000);
-
   serialPort.addListener("data", function (data) {
     let message = data.toString();
     if (message.localeCompare("End of list") != 0) {
@@ -41,13 +58,10 @@ server.get("/SwimuWeb/FileList", jsonParser, (req, res) => {
       });
     } else {
       serialPort.removeAllListeners();
-      clearTimeout(timeoutNoResponse);
-      res.setHeader("Content-Type", "application/json");
-      res.send(JSON.stringify(fileList));
       transferFilesSequentiallyArduino(fileList);
     }
   });
-});
+}
 
 async function transferFilesSequentiallyArduino(fileList) {
   for (const fileName of fileList) {
@@ -56,12 +70,12 @@ async function transferFilesSequentiallyArduino(fileList) {
       console.log("File transferred successfully: " + fileName);
     } catch (error) {
       console.log("Error occurred during file transfer: ", error);
-      break; // Stop transferring files if an error occurs
+      break; 
     }
   }
   console.log("All files transferred successfully");
+  getFromServer('20230522132240')
 }
-
 
 function sendSerialFileRequest(fileName) {
   return new Promise((resolve, reject) => {

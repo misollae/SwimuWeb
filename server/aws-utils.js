@@ -25,6 +25,17 @@ async function saveToServer(filename, content) {
   }
 }
 
+async function getFromServer(filename) {
+    const params = {
+      Bucket: 'swimu',
+      Key: filename,
+    };
+  
+    const fileStream = s3Client.getObject(params).createReadStream();
+    console.log(fileStream);
+    return fileStream;
+}
 
 
-export { saveToServer };
+
+export { saveToServer, getFromServer };
