@@ -13,7 +13,6 @@ function retryFetch(endpoint, options, retries = 20, delay = 5000) {
           }
         })
         .then(data => {
-          console.log(data);
           resolve(data);
         })
         .catch(error => {
@@ -34,7 +33,7 @@ function retryFetch(endpoint, options, retries = 20, delay = 5000) {
   });
 }
 
-/*function listSessionsWithRetry() {
+function listSessionsWithRetry() {
   const endpoint = "http://localhost:3000/SwimuWeb/SessionList";
   const options = {
     method: "GET",
@@ -44,8 +43,9 @@ function retryFetch(endpoint, options, retries = 20, delay = 5000) {
     },
   };
   retryFetch(endpoint, options).then(data => {
+    console.log(data)
     for (const session in data) {
-      const filename = data[num];
+      const filename = data[session];
       let button = document.createElement("button");
       button.textContent = filename;
       function handleClick() {
@@ -56,10 +56,10 @@ function retryFetch(endpoint, options, retries = 20, delay = 5000) {
     }
   })
   .catch(error => console.log(error));
-} */
+} 
 
 function requestSessionWithRetry(filename) {
-  const endpoint = "http://localhost:3000/SwimuWeb";
+  const endpoint = "http://localhost:3000/SwimuWeb/ShowSession";
   const options = {
     method: "POST",
     headers: {
