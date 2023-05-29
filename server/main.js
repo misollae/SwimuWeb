@@ -1,4 +1,4 @@
-import { saveToServer, getFromServer } from "./aws-utils.js";
+import { saveToServer, getFromServer, listServerFiles } from "./aws-utils.js";
 import express from "express";
 import bodyParser from "body-parser";
 const server = express();
@@ -104,5 +104,3 @@ function sendSerialFileRequest(fileName) {
 http.listen(port, function () {
   console.log("Server listening on *:3000");
 });
-
-getFromServer('20230522132240.txt');

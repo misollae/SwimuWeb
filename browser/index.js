@@ -34,9 +34,8 @@ function retryFetch(endpoint, options, retries = 20, delay = 5000) {
   });
 }
 
-// Mudar para a Cloud
-/* function showListWithRetry() {
-  const endpoint = "http://localhost:3000/SwimuWeb/FileList";
+/*function listSessionsWithRetry() {
+  const endpoint = "http://localhost:3000/SwimuWeb/SessionList";
   const options = {
     method: "GET",
     headers: {
@@ -45,12 +44,12 @@ function retryFetch(endpoint, options, retries = 20, delay = 5000) {
     },
   };
   retryFetch(endpoint, options).then(data => {
-    for (const num in data) {
-      const value = data[num];
+    for (const session in data) {
+      const filename = data[num];
       let button = document.createElement("button");
-      button.textContent = formatPath(value);
+      button.textContent = filename;
       function handleClick() {
-        requestFileWithRetry(value); 
+        requestSessionWithRetry(filename); 
       }
       button.onclick = handleClick;
       document.body.appendChild(button);
@@ -59,8 +58,7 @@ function retryFetch(endpoint, options, retries = 20, delay = 5000) {
   .catch(error => console.log(error));
 } */
 
-
-function requestFileWithRetry(file_name) {
+function requestSessionWithRetry(filename) {
   const endpoint = "http://localhost:3000/SwimuWeb";
   const options = {
     method: "POST",
@@ -68,7 +66,7 @@ function requestFileWithRetry(file_name) {
       Accept: "application.json",
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ file_name: file_name }),
+    body: JSON.stringify({ filename: filename }),
   };
 
   retryFetch(endpoint, options)
