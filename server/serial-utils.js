@@ -94,4 +94,4 @@ async function checkPortConnection(portName) {
         }
       });
     });
-  }
+  }  

@@ -12,6 +12,9 @@ serialStart();
 
 
 
+
 http.listen(port, function () {
   console.log("Server listening on *:3000");
 });
+
+getFromServer('20230522132240.txt');
