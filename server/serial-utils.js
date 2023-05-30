@@ -26,7 +26,7 @@ async function checkPortConnection(portName) {
     checkPortConnection('COM10').then((connected) => {
       if (connected) {
         clearInterval(connectionInterval);
-        serialPort = new SerialPort({ path: "COM10", baudRate: 9600 });
+        serialPort = new SerialPort({ path: "COM10", baudRate: 115200 });
         getSerialFileList();
       }
     }).catch((err) => {
@@ -47,10 +47,10 @@ async function checkPortConnection(portName) {
     serialPort.addListener("data", function (data) {
       let message = data.toString();
       if (message.localeCompare("End of list") != 0) {
-        var messages = message.split('\r\n')
+        var messages = message.split('\r\n');
         messages.forEach(m => {
           m = m.trim().replace(/\s+/g, " ");
-          if (m != "" && m != "Files:") fileList.push(m)
+          if (m != "" && m != "Files:") fileList.push(m);
         });
       } else {
         serialPort.removeAllListeners();
@@ -89,7 +89,7 @@ async function checkPortConnection(portName) {
               serialPort.removeAllListeners();
               resolve();
             } else {
-              content += message.trim().replace(/\s+/g, " ") + "\n";
+              content += message.replace(/[ \t\r\n]+/g, " "); //.trim().replace(/\s+/g, " ");
             }
           });
         }

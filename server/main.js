@@ -1,5 +1,6 @@
 
 import { getFromServer, listServerFiles } from "./aws-utils.js";
+import { getNumStrokes } from "./data-utils.js";
 import express from "express";
 import bodyParser from "body-parser";
 const server = express();
@@ -23,9 +24,16 @@ server.get("/SwimuWeb/SessionList", jsonParser, async (req, res) => {
 });
 
 server.post("/SwimuWeb/ShowSession", jsonParser, async (req, res) => {
-  const values = await getFromServer(req.body.filename);
-  console.log(values);
-  res.send();
+  try {
+    const values = await getFromServer(req.body.filename);
+    res.setHeader("Content-Type", "application/json");    
+    const numStrokes = getNumStrokes(values);
+    res.send(JSON.stringify(numStrokes));
+  } catch (err) {
+    console.log("Error", err);
+    res.status(500).send("An error occurred while retrieving the file.");
+  }
+
 });
 
 http.listen(port, function () {

@@ -55,7 +55,7 @@ async function getFromServer(filename) {
 }
 
 function formatContent(data) {
-  const values = data.split("; ").join(" ").split(" ").filter(Boolean);
+  const values = data.split(";").join(" ").split(" ").filter(Boolean);
   const numRows = values.length / 4;
   const result = [];
 
@@ -86,4 +86,4 @@ async function listServerFiles() {
   }
 }
 
-export { saveToServer, getFromServer, listServerFiles};
+export { saveToServer, getFromServer, listServerFiles };

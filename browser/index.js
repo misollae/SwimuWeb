@@ -17,7 +17,7 @@ function retryFetch(endpoint, options, retries = 20, delay = 5000) {
         })
         .catch(error => {
           console.error(`Failed to fetch ${endpoint}. Retrying in ${delay}ms...`);
-          if (retries > 0 && !responseReceived) { 
+          if (retries > 0 && !responseReceived) {
             setTimeout(makeRequest, delay);
             retries--;
           } else if (responseReceived) {
@@ -43,7 +43,6 @@ function listSessionsWithRetry() {
     },
   };
   retryFetch(endpoint, options).then(data => {
-    console.log(data)
     for (const session in data) {
       const filename = data[session];
       let button = document.createElement("button");
@@ -68,6 +67,38 @@ function requestSessionWithRetry(filename) {
     },
     body: JSON.stringify({ filename: filename }),
   };
+  retryFetch(endpoint, options).then(data => {
+    const timestamps = [];
+    const avgAngles  = [];
 
-  retryFetch(endpoint, options)
+    for (const item of data.averageAngles) {
+      timestamps.push(item.timestamp);
+      avgAngles.push(item.avgAngle);
+    }
+
+
+    new Chart(document.getElementById("bar-chart"), {
+      type: 'bar',
+      data: {
+         labels: timestamps,
+         datasets: [
+            {
+               label: "Population (millions)",
+               data: avgAngles
+            }
+         ]
+      },
+      options: {
+         legend: { display: false },
+         title: {
+            display: true,
+            text: 'U.S population'
+         }
+      }
+   });
+
+  })
+  .catch(error => console.log(error));
 }
+
+// {averageAngles: Array(4700), max: Array(4601), min: Array(4601)}
