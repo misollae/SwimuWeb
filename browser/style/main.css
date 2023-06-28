@@ -1,0 +1,238 @@
+
+html {
+    overflow: -moz-scrollbars-vertical; 
+    overflow-y: scroll;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #e7edf2;
+}
+
+main {
+  flex: 1;
+  display: flex;
+  text-align: center;
+  flex-direction: column;
+}
+
+#file_list {
+  margin-top: 115px;
+}
+
+#file_list button {
+  background-color: #e7edf2;
+  border: none;
+  font-size: 20px;
+  color: #71a9d5;
+}
+
+#file_list select {
+  background-color: transparent;
+  font-size: 20px;
+  border: none;
+  text-align: center;
+  margin-left: 15px;
+  margin-right: -24px;
+  color: #333;
+}
+
+#file_list select option {
+  text-align: leftF;
+  font-size: 14px; 
+}
+
+.file_info{
+  width: 98%;
+  margin-top: 3%;
+}
+
+.file_info .info_left{
+  width: 12%;
+  position: fixed;
+  margin-left: 2%;
+  height: 500px;
+  float: left;
+  align-items: center;
+}
+
+.file_info .info_right{
+  margin-left: 27%;
+  height: 100px;
+  background: blue;
+}
+
+
+
+.square_info {
+  background-color: white;
+  height: 100px;
+  width: 100%;
+  margin-bottom: 25%;
+  box-shadow: #33333313 5px 5px 5px;
+  border-radius: 15px;
+  padding: 5%;
+}
+
+.round-icon {
+  width: 55px;
+  height: 55px;
+  align-self: center;
+  margin-top: -21%;
+  margin-left: 5%;
+  margin-bottom: 3%;
+  border-radius: 50%; 
+  background-color: #71a9d5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.square_info .left-title {
+  font-size: 18px;
+  margin-left: 8%;
+  text-align: start;
+}
+.square_info .left-value {
+  font-size: 36px;
+  color: #71a9d5;
+  text-align: end;
+  margin-right: 8%;
+  margin-top: -3%;
+}
+
+.round-icon i {
+  font-size: 18px;
+  color: #fff; 
+}
+
+.placeholder {
+  padding-top: 450px;
+}
+  
+.drop {
+    margin: 175px auto;
+    position: relative;
+    width: 34px;
+    height: 32px;
+    top: -30px;
+    margin: 0 auto;
+    background: #71a9d5;
+    -moz-border-radius: 30px;
+    -webkit-border-radius: 30px;
+    border-radius: 30px;
+    -moz-animation-name: drip;
+    -webkit-animation-name: drip;
+    animation-name: drip;
+    -moz-animation-timing-function: cubic-bezier(1,0,.91,.19);
+    -webkit-animation-timing-function: cubic-bezier(1,0,.91,.19);
+    animation-timing-function: cubic-bezier(1,0,.91,.19);
+    -moz-animation-duration: 3s;
+    -webkit-animation-duration: 3s;
+    animation-duration: 3s;
+    -moz-animation-iteration-count: infinite;
+    -webkit-animation-iteration-count: infinite;
+    animation-iteration-count: infinite;
+  }
+
+  .placeholder .name {
+    text-align: center;
+    color: #b7bbbf;
+    margin-bottom: -240px;
+  }
+  
+  .drop:before {
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-left: 18px solid transparent;
+    border-right: 17px solid transparent;
+    border-bottom: 34px solid #71a9d5;
+    top: -21px;
+  }
+  
+  .wave {
+    margin: 175px auto;
+    position: relative;
+    opacity: 0;
+    top: 0;
+    width: 2px;
+    height: 1px;
+    border: #71a9d5 7px solid;
+    -moz-border-radius: 300px / 150px;
+    -webkit-border-radius: 300px / 150px;
+    border-radius: 300px / 150px;
+    -moz-animation-name: ripple;
+    -webkit-animation-name: ripple;
+    animation-name: ripple;
+    -moz-animation-delay: 3s;
+    -webkit-animation-delay: 3s;
+    animation-delay: 3s;
+    -moz-animation-duration: 3s;
+    -webkit-animation-duration: 3s;
+    animation-duration: 3s;
+    -moz-animation-iteration-count: infinite;
+    -webkit-animation-iteration-count: infinite;
+    animation-iteration-count: infinite;
+  }
+  
+  .wave:after {
+    content: "";
+    position: absolute;
+    opacity: 0;
+    top: -5px;
+    left: -5px;
+    width: 2px;
+    height: 1px;
+    border: #71a9d5 5px solid;
+    -moz-border-radius: 300px / 150px;
+    -webkit-border-radius: 300px / 150px;
+    border-radius: 300px / 150px;
+    -moz-animation-name: ripple-2;
+    -webkit-animation-name: ripple-2;
+    animation-name: ripple-2;
+    -moz-animation-duration: 3s;
+    -webkit-animation-duration: 3s;
+    animation-duration: 3s;
+    -moz-animation-iteration-count: infinite;
+    -webkit-animation-iteration-count: infinite;
+    animation-iteration-count: infinite;
+  }
+  
+  @keyframes ripple {
+      from {
+        opacity: 1;
+      }
+      to {
+        width: 600px;
+        height: 300px;
+        border-width: 1px;
+        top: -100px;
+        opacity: 0;
+      }
+  }
+  
+  @keyframes ripple-2 {
+      0% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0;
+      }
+    100% {
+      width: 200px;
+      height: 100px;
+      border-width: 1px;
+      top: 100px;
+      left: 200px;
+    }
+  }
+  
+  @keyframes drip {
+      to {
+        top: 190px;
+      }
+  }

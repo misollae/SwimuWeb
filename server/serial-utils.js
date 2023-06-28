@@ -23,10 +23,10 @@ async function checkPortConnection(portName) {
   
   let serialPort = null;
   async function monitorPortConnection() {
-    checkPortConnection('COM10').then((connected) => {
+    checkPortConnection('COM6').then((connected) => {
       if (connected) {
         clearInterval(connectionInterval);
-        serialPort = new SerialPort({ path: "COM10", baudRate: 115200 });
+        serialPort = new SerialPort({ path: "COM6", baudRate: 115200 });
         getSerialFileList();
       }
     }).catch((err) => {
@@ -51,6 +51,7 @@ async function checkPortConnection(portName) {
         messages.forEach(m => {
           m = m.trim().replace(/\s+/g, " ");
           if (m != "" && m != "Files:") fileList.push(m);
+          console.log(m)
         });
       } else {
         serialPort.removeAllListeners();

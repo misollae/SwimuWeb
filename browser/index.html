@@ -1,28 +1,123 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<title>SWIMU</title>
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+  <title>Swimu - My Swimming Journey</title>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style/navbar.css" />
+  <link rel="stylesheet" href="style/main.css" />
 </head>
+
 <body onload="listSessionsWithRetry()">
 
-<h1>SWIMU </h1>
+  <header>
+    <nav>
+      <a href="index.html" id="logo">
+        <image src="../images/logo.png" height="45px" />
+      </a>
+      <i class="fas fa-bars" id="ham-menu"></i>
+      <ul id="nav-bar">
+        <li>
+          <a href="index.html">Home</a>
+        </li>
+        <li>
+          <a href="about.html">About</a>
+        </li>
+        <li>
+          <a href="help.html">Help</a>
+        </li>
+        <li>
+          <a href="contact.html">Contact</a>
+        </li>
+      </ul>
+    </nav>
+  </header>
 
-<div id="file_list">
 
-</div>
+  <!--<div class="placeholder" display="none">
+    <h1 class="name">Nothing to show yet...</h1>
+    <div class="animation">
+      <div class="drop"></div>
+      <div class="wave"></div>
+    </div>
+  </div>-->
+
+  <main>
+    <div id="file_list"></div>
+
+    <div class="file_info">
+      <div class="info_left"> 
+          <!--<div class="square_info">
+            <div class="round-icon"><i class="fas fa-water"></i></div>
+            <span>Avg. SWOLF Score</span>
+          </div>-->
+          <div class="square_info">
+            <div class="round-icon"><i class="fas fa-person-swimming"></i></div>
+            <div class="left-title">Total Strokes:</div>
+            <div class="left-value">11</div>
+          </div>
+          <div class="square_info">
+            <div class="round-icon"><i class="fas fa-water-ladder"></i></div>
+            <div class="left-title">Total Laps:</div>
+            <div class="left-value">8</div>
+          </div>
+          <div class="square_info">
+            <div class="round-icon"><i class="fas fa-flag"></i></div>
+            <div class="left-title">Total Meters:</div>
+            <div class="left-value">4</div>
+          </div>
+      </div>
+      <div class="info_right"> 
+          Right Div
+      </div>
+  </div>
+  </main>
 
 
-<p> Insira nome do ficheiro para download </p>
 
-  <input type="text" id="file_name" name="file_name">
-  <button onclick="requestFileWithRetry()">Submit</button>
+
 
   <div style="width: 800; height: 600">
     <canvas id="bar-chart">
     </canvas>
- </div>
+  </div>
+
+
+  <script>
+    let hamMenuIcon = document.getElementById("ham-menu");
+    let navBar = document.getElementById("nav-bar");
+    let navLinks = navBar.querySelectorAll("li");
+    hamMenuIcon.addEventListener("click", () => {
+      navBar.classList.toggle("active");
+      hamMenuIcon.classList.toggle("fa-times");
+    });
+    navLinks.forEach((navLinks) => {
+      navLinks.addEventListener("click", () => {
+        navBar.classList.remove("active");
+        hamMenuIcon.classList.toggle("fa-times");
+      });
+    });
+
+    var btn = document.getElementById("btn-dropdown");
+    var nav = document.getElementById("nav-dropdown");
+
+    btn.addEventListener('click', () => {
+      if (!btn.classList.contains("is-open")) {
+        btn.classList.add("is-open");
+        nav.classList.add("is-open");
+      } else {
+        btn.classList.remove("is-open");
+        nav.classList.remove("is-open");
+      }
+    });
+
+    
+  </script>
 </body>
 
 <script src="index.js"></script>

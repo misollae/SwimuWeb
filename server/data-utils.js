@@ -1,6 +1,10 @@
 export function getNumStrokes(data) {
+  console.log(data)
+  data = module2(data)
   const averageAngles = averageAngle(data);
-  const locals        = getLocals(averageAngles);
+  const locals        = getBothLocals(averageAngles);
+
+  console.log(locals)
   console.log(calculateNumStrokes(
     locals.max,
     locals.min
@@ -8,12 +12,24 @@ export function getNumStrokes(data) {
   return { averageAngles : averageAngles, locals : locals }
 }
 
+
+function module2(data) {
+  const averageAngles = averageAngle(data);
+  let angleSum = 0;
+  for (let i = 0; i < averageAngles.length; i++) {
+    angleSum += averageAngles[i].avgAngle;
+  }
+  var avgAngle = angleSum / data.length;
+  var localIdx = (avgAngle > 0) ? computeMax(averageAngles, avgAngle) : computeMin(averageAngles, avgAngle)
+  return data.slice(localIdx[0], localIdx[localIdx.length - 1])
+}
+
 function averageAngle(data) {
   const result = [];
   const averageAngles = data.map((obj) => {
-    const roll  = parseFloat(obj.roll) - 180;
-    const pitch = parseFloat(obj.pitch) - 180;
-    const yaw   = parseFloat(obj.yaw) - 180;
+    const roll  = parseFloat(obj.roll);
+    const pitch = parseFloat(obj.pitch);
+    const yaw   = parseFloat(obj.yaw);
 
     result.push({
       timestamp: obj.timestamp,
@@ -23,7 +39,7 @@ function averageAngle(data) {
   return result;
 }
 
-function getLocals(data) {
+function getBothLocals(data) {
   const invertedData = data.map((item) => {
     return { timestamp: item.timestamp, avgAngle: -item.avgAngle };
   });
@@ -35,26 +51,31 @@ function getLocals(data) {
   const averageAngle = angleSum / data.length;
 
   if (averageAngle > 0) 
-    return {max : computeMinMax(data, averageAngle), min:computeMinMax(averageAngle, -averageAngle)};
+    return {max : computeMax(data, averageAngle), min:computeMin(invertedData, -averageAngle)};
   else
-    return {max : computeMinMax(invertedData, -averageAngle), min : computeMinMax(data, averageAngle)};
+    return {max : computeMax(invertedData, -averageAngle), min : computeMin(data, averageAngle)};
 }
 
-function computeMinMax(data, averageAngle) {
+
+function computeMax(data) {
   let limit;
   let locals = [];
-  if (averageAngle > 0) {
-    const globalMax = Math.max(...data.map(obj => obj.avgAngle));
-    for (let i = 0; i < data.length; i++) {
-      if ((data[i].avgAngle >= globalMax / 2)) { 
-        var lastIndex = locals[locals.length - 1];
-        if (!lastIndex || (i - lastIndex) >= 100) {
-          locals.push(i); 
-        }
+  const globalMax = Math.max(...data.map(obj => obj.avgAngle));
+  for (let i = 0; i < data.length; i++) {
+    if ((data[i].avgAngle >= globalMax / 2)) { 
+      var lastIndex = locals[locals.length - 1];
+      if (!lastIndex || (i - lastIndex) >= 100) {
+        locals.push(i); 
       }
     }
-  } else {
-    const globalMin = Math.min(...data.map(obj => obj.avgAngle));
+  }
+  return locals;
+}
+
+function computeMin(data) {
+  let limit;
+  let locals = [];
+  const globalMin = Math.min(...data.map(obj => obj.avgAngle));
     for (let i = 0; i < data.length; i++) {
       if ((data[i].avgAngle >= globalMin / 2)) { 
         var lastIndex = locals[locals.length - 1];
@@ -63,8 +84,6 @@ function computeMinMax(data, averageAngle) {
         }
       }
     }
-  }
-  console.log(locals)
   return locals;
 }
 

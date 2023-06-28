@@ -33,7 +33,10 @@ function retryFetch(endpoint, options, retries = 20, delay = 5000) {
   });
 }
 
-function listSessionsWithRetry() {
+let fileList = [];
+let currentIndex = 0;
+
+/*function listSessionsWithRetry() {
   const endpoint = "http://localhost:3000/SwimuWeb/SessionList";
   const options = {
     method: "GET",
@@ -55,7 +58,71 @@ function listSessionsWithRetry() {
     }
   })
   .catch(error => console.log(error));
-} 
+} */
+
+
+function listSessionsWithRetry() {
+  const endpoint = "http://localhost:3000/SwimuWeb/SessionList";
+  const options = {
+    method: "GET",
+    headers: {
+      Accept: "application.json",
+      "Content-Type": "application/json",
+    },
+  };
+  retryFetch(endpoint, options)
+    .then(data => {
+      fileList = Object.values(data);
+      displayCurrentFile();
+    })
+    .catch(error => console.log(error));
+}
+
+function displayCurrentFile() {
+  const fileListDiv = document.getElementById("file_list");
+
+  const dropdownOptions = fileList.map((file, index) => {
+    const date = formatFileDate(parseFileDate(file));
+    return `<option value="${index}" ${index === currentIndex ? 'selected' : ''}>${date}</option>`;
+  }).join("");
+
+  fileListDiv.innerHTML = `
+    <button id="prevButton" onclick="navigateFiles(-1)"><i class="fas fa-angle-left"></i></button>
+    <select id="fileDropdown" onchange="selectFile(this.value)">${dropdownOptions}</select>
+    <button id="nextButton" onclick="navigateFiles(1)"><i class="fas fa-angle-right"></i></button></button>
+  `;
+}
+
+function selectFile(index) {
+  currentIndex = parseInt(index);
+  displayCurrentFile();
+}
+
+function navigateFiles(direction) {
+  currentIndex += direction;
+  if (currentIndex < 0) {
+    currentIndex = 0;
+  } else if (currentIndex >= fileList.length) {
+    currentIndex = fileList.length - 1;
+  }
+  displayCurrentFile();
+}
+
+function parseFileDate(fileName) {
+  const year = fileName.substring(0, 4);
+  const month = fileName.substring(4, 6);
+  const day = fileName.substring(6, 8);
+  const hours = fileName.substring(8, 10);
+  const minutes = fileName.substring(10, 12);
+  const seconds = fileName.substring(12, 14);
+
+  return new Date(year, month - 1, day, hours, minutes, seconds);
+}
+
+function formatFileDate(fileDate) {
+  const options = { day: "numeric", month: "long", year: "numeric", hour: "numeric", minute: "numeric", weekday: "long" };
+  return fileDate.toLocaleDateString("en-US", options);
+}
 
 function requestSessionWithRetry(filename) {
   const endpoint = "http://localhost:3000/SwimuWeb/ShowSession";
