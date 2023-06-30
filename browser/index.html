@@ -3,6 +3,14 @@
 
 <head>
   <title>Swimu - My Swimming Journey</title>
+  <link rel="apple-touch-icon" sizes="180x180" href="favicon_package_v0.16/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon_package_v0.16/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon_package_v0.16/favicon-16x16.png">
+  <link rel="manifest" href="favicon_package_v0.16/site.webmanifest">
+  <link rel="mask-icon" href="favicon_package_v0.16/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
 
@@ -10,6 +18,9 @@
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style/navbar.css" />
+
+  <script src="../chart_trial/codebase/chart.js"></script>
+  <link href="../chart_trial/codebase/chart.css" rel="stylesheet">
   <link rel="stylesheet" href="style/main.css" />
 </head>
 
@@ -23,16 +34,16 @@
       <i class="fas fa-bars" id="ham-menu"></i>
       <ul id="nav-bar">
         <li>
-          <a href="index.html">Home</a>
+          <a href="index.html">Sessions</a>
         </li>
         <li>
-          <a href="about.html">About</a>
+          <a href="compare.html">My Progress</a>
         </li>
         <li>
           <a href="help.html">Help</a>
         </li>
         <li>
-          <a href="contact.html">Contact</a>
+          <a href="about.html">About</a>
         </li>
       </ul>
     </nav>
@@ -51,41 +62,60 @@
     <div id="file_list"></div>
 
     <div class="file_info">
-      <div class="info_left"> 
-          <!--<div class="square_info">
-            <div class="round-icon"><i class="fas fa-water"></i></div>
-            <span>Avg. SWOLF Score</span>
-          </div>-->
-          <div class="square_info">
-            <div class="round-icon"><i class="fas fa-person-swimming"></i></div>
-            <div class="left-title">Total Strokes:</div>
-            <div class="left-value">11</div>
-          </div>
-          <div class="square_info">
-            <div class="round-icon"><i class="fas fa-water-ladder"></i></div>
-            <div class="left-title">Total Laps:</div>
-            <div class="left-value">8</div>
-          </div>
-          <div class="square_info">
-            <div class="round-icon"><i class="fas fa-flag"></i></div>
-            <div class="left-title">Total Meters:</div>
-            <div class="left-value">4</div>
-          </div>
+      <div class="info_left">
+        <div class="square_info">
+          <div class="round-icon"><i class="fas fa-person-swimming"></i></div>
+          <div class="left-title">Total Strokes:</div>
+          <div class="left-value" id="totalStrokes">0</div>
+        </div>
+        <div class="square_info">
+          <div class="round-icon"><i class="fas fa-water-ladder"></i></div>
+          <div class="left-title">Total Laps:</div>
+          <div class="left-value" id="totalLaps">0</div>
+        </div>
+        <div class="square_info">
+          <div class="round-icon"><i class="fas fa-flag"></i></div>
+          <div class="left-title">Total Meters:</div>
+          <div class="left-value" id="totalMeters">0</div>
+        </div>
       </div>
-      <div class="info_right"> 
-          Right Div
+      <div class="info_middle">
+        <div class="middle-left">
+          <div id="swolfChart" style="padding: 20px;"></div>
+        </div>
+
+        <div class="middle-right">
+          <div class="right-box" style="height: 230px; overflow: hidden;">
+            <div id="timePerStyleChart"></div>
+          </div>
+          <div class="right-box" style="margin-bottom: 10%;">
+            <div class="round-icon" style="margin-top: -44px;"><i class="fas fa-clock"></i></div>
+
+            <div class="container" style="display: flex; height: 100px;">
+              <div style="width: 50%;">
+                <div class="right-title">Total Time:</div>
+                <div class="right-value" id="totalTime">0:00</div>
+              </div>
+              <div id="avgTimeDiv">
+                <div class="right-title">Avg. Lap:</div>
+                <div class="right-value" id="avgTime">0:00</div>
+              </div>
+            </div>
+          </div>
+
+          <a href="#" id="deleteBtn" class="cta deleteBtn">
+            <span>Delete Session</span>
+          </a>
+        </div>
       </div>
-  </div>
+    </div>
   </main>
 
-
-
-
-
-  <div style="width: 800; height: 600">
+  <!--<div style="width: 100%; height: 600">
     <canvas id="bar-chart">
     </canvas>
-  </div>
+  </div>-->
+
 
 
   <script>
@@ -106,7 +136,7 @@
     var btn = document.getElementById("btn-dropdown");
     var nav = document.getElementById("nav-dropdown");
 
-    btn.addEventListener('click', () => {
+    /*btn.addEventListener('click', () => {
       if (!btn.classList.contains("is-open")) {
         btn.classList.add("is-open");
         nav.classList.add("is-open");
@@ -114,9 +144,19 @@
         btn.classList.remove("is-open");
         nav.classList.remove("is-open");
       }
+    });*/
+
+    let deleteBtn = document.getElementById("deleteBtn");
+    deleteBtn.addEventListener('click', () => {
+      console.log("hi");
+      deleteFileWithRetry();
     });
 
+  </script>
+
+  <script>
     
+
   </script>
 </body>
 

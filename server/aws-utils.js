@@ -2,6 +2,7 @@ import {
   PutObjectCommand,
   GetObjectCommand,
   ListObjectsV2Command,
+  DeleteObjectCommand
 } from "@aws-sdk/client-s3";
 import { s3Client } from "../libs/aws-client.js";
 
@@ -54,6 +55,22 @@ async function getFromServer(filename) {
   }
 }
 
+/*** Deleting from Cloud ***/
+async function deleteFromServer(filename) {
+  const params = {
+    Bucket: "swimu",
+    Key: filename,
+  };
+
+  try {
+    const results = await s3Client.send(new DeleteObjectCommand(params));
+    console.log("Successfully deleted " + params.Key + " from " + params.Bucket);
+    return results;
+  } catch (err) {
+    console.log("Error", err);
+  }
+}
+
 function formatContent(data) {
   const values = data.split(";").join(" ").split(" ").filter(Boolean);
   const numRows = values.length / 4;
@@ -86,4 +103,4 @@ async function listServerFiles() {
   }
 }
 
-export { saveToServer, getFromServer, listServerFiles };
+export { saveToServer, getFromServer, deleteFromServer, listServerFiles };

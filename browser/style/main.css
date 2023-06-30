@@ -1,7 +1,7 @@
 
 html {
     overflow: -moz-scrollbars-vertical; 
-    overflow-y: scroll;
+    overflow: hidden;
 }
 
 body {
@@ -22,6 +22,47 @@ main {
   margin-top: 115px;
 }
 
+.cta {
+  margin-left: 9%;
+  position: relative;
+  padding: 13px 22px;
+  transition: all 0.2s ease;
+}
+.cta:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  border-radius: 28px;
+  background: #cfdeea;
+  width: 40px;
+  height: 40px;
+  transition: all 0.3s ease;
+}
+.cta span {
+  position: relative;
+  font-size: 16px;
+  color: #7f7f7f;
+  vertical-align: middle;
+}
+.cta:hover:before {
+  width: 100%;
+  background: #cfdeea;
+}
+.cta:hover svg {
+  transform: translateX(0);
+}
+.cta:active {
+  transform: scale(0.96);
+}
+
+.deleteBtn {
+  text-decoration: none;
+  color: inherit;
+}
+
+
 #file_list button {
   background-color: #e7edf2;
   border: none;
@@ -29,42 +70,92 @@ main {
   color: #71a9d5;
 }
 
+#nextButton {
+  padding-right: 40px;
+}
+
 #file_list select {
   background-color: transparent;
-  font-size: 20px;
+  font-size: 19px;
+  width: 430px;
   border: none;
   text-align: center;
   margin-left: 15px;
-  margin-right: -24px;
-  color: #333;
+  margin-right: -38px;
+  color: #4c4c4c;
 }
 
 #file_list select option {
-  text-align: leftF;
+  text-align: left;
   font-size: 14px; 
 }
 
 .file_info{
   width: 98%;
-  margin-top: 3%;
+  margin-top: 2%;
 }
 
 .file_info .info_left{
   width: 12%;
-  position: fixed;
   margin-left: 2%;
   height: 500px;
   float: left;
   align-items: center;
 }
 
-.file_info .info_right{
-  margin-left: 27%;
-  height: 100px;
-  background: blue;
+
+.file_info .info_middle{
+  margin-left: 17.5%;
+  height: 447px;
+  width: 82%;
+  align-items: center;
+
 }
 
+.file_info .info_middle .middle-left{
+  width: 70%; 
+  float: left;
+  height: 442px;
+  background: white;
+  overflow: hidden;
+  box-shadow: #33333313 5px 5px 5px;
+  border-radius: 15px;
+}
 
+.file_info .info_middle .middle-right{
+  margin-left: 73%;
+  width: 25%;
+  align-items: center;
+}
+
+.right-box{
+  background-color: white;
+  height: 105px;
+  width: 99%;
+  margin-bottom: 15%;
+  box-shadow: #33333313 5px 5px 5px;
+  border-radius: 15px;
+  padding: 5%;
+}
+
+#timePerStyleChart {
+  padding-left: 5px;
+  margin-top: -85px;
+  padding-right: 5px;
+}
+
+.file_info .info_right{
+  margin-left: 80%;
+  height: 447px;
+  width: 10%;
+  background-color: white;
+  box-shadow: #33333313 5px 5px 5px;
+  border-radius: 15px;
+}
+
+#swolfChart {
+  z-index: 1 !important;
+}
 
 .square_info {
   background-color: white;
@@ -91,12 +182,14 @@ main {
 }
 
 .square_info .left-title {
-  font-size: 18px;
+  font-size: 17.5px;
   margin-left: 8%;
+  color: #7f7f7f;
   text-align: start;
 }
+
 .square_info .left-value {
-  font-size: 36px;
+  font-size: 34px;
   color: #71a9d5;
   text-align: end;
   margin-right: 8%;
@@ -106,6 +199,36 @@ main {
 .round-icon i {
   font-size: 18px;
   color: #fff; 
+}
+
+.right-box .right-title {
+  font-size: 17.5px;
+  margin-left: 8%;
+  color: #7f7f7f;
+  text-align: start;
+}
+
+#swolfChart {
+  margin-left: -2%;
+  margin-top: -1%;
+  height: 435px;
+}
+
+#avgTimeDiv{
+  flex-grow: 1;
+  height: 70px;
+  padding-right: 5px;
+  padding-left: 10px;
+  margin-left:1%;
+  border-left: 3px solid #ececec;
+}
+
+.right-box .right-value {
+  font-size: 30px;
+  color: #71a9d5;
+  text-align: end;
+  margin-right: 8%;
+  margin-top: 4%;
 }
 
 .placeholder {
@@ -236,3 +359,4 @@ main {
         top: 190px;
       }
   }
+

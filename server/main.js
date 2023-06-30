@@ -1,5 +1,5 @@
 
-import { getFromServer, listServerFiles } from "./aws-utils.js";
+import { deleteFromServer, getFromServer, listServerFiles } from "./aws-utils.js";
 import { getNumStrokes } from "./data-utils.js";
 import express from "express";
 import bodyParser from "body-parser";
@@ -16,7 +16,7 @@ server.get("/SwimuWeb/SessionList", jsonParser, async (req, res) => {
   try {
     const fileList = await listServerFiles();
     res.setHeader("Content-Type", "application/json");
-    res.send(JSON.stringify(fileList));
+    res.send(JSON.stringify(fileList.reverse()));
   } catch (err) {
     console.log("Error", err);
     res.status(500).send("An error occurred while retrieving the file list.");
@@ -34,6 +34,16 @@ server.post("/SwimuWeb/ShowSession", jsonParser, async (req, res) => {
     res.status(500).send("An error occurred while retrieving the file.");
   }
 
+});
+
+server.delete("/SwimuWeb/DeleteFile", jsonParser, async (req, res) => {
+  try {    
+    await deleteFromServer(req.body.filename);
+    res.send(JSON.stringify("File deleted successfully"));
+  } catch (err) {
+    console.log("Error", err);
+    res.status(500).send("An error occurred while deleting the file.");
+  }
 });
 
 http.listen(port, function () {

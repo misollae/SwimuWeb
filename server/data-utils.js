@@ -1,17 +1,13 @@
 export function getNumStrokes(data) {
-  console.log(data)
   data = module2(data)
   const averageAngles = averageAngle(data);
   const locals        = getBothLocals(averageAngles);
 
-  console.log(locals)
-  console.log(calculateNumStrokes(
-    locals.max,
-    locals.min
-  ))
-  return { averageAngles : averageAngles, locals : locals }
-}
+  //console.log(locals)
 
+  const numStrokes = calculateNumStrokes(locals.max, locals.min)
+  return { averageAngles : averageAngles, locals : locals, numStrokes: numStrokes }
+}
 
 function module2(data) {
   const averageAngles = averageAngle(data);
@@ -20,6 +16,8 @@ function module2(data) {
     angleSum += averageAngles[i].avgAngle;
   }
   var avgAngle = angleSum / data.length;
+  console.log(avgAngle);
+
   var localIdx = (avgAngle > 0) ? computeMax(averageAngles, avgAngle) : computeMin(averageAngles, avgAngle)
   return data.slice(localIdx[0], localIdx[localIdx.length - 1])
 }
@@ -27,6 +25,10 @@ function module2(data) {
 function averageAngle(data) {
   const result = [];
   const averageAngles = data.map((obj) => {
+    const mapValue = (value) => {
+      return ((value - 0) * (128 - (-128)) / (255 - 0)) + (-128);
+    };
+    
     const roll  = parseFloat(obj.roll);
     const pitch = parseFloat(obj.pitch);
     const yaw   = parseFloat(obj.yaw);
@@ -51,16 +53,16 @@ function getBothLocals(data) {
   const averageAngle = angleSum / data.length;
 
   if (averageAngle > 0) 
-    return {max : computeMax(data, averageAngle), min:computeMin(invertedData, -averageAngle)};
+    return {max : computeMax(data), min:computeMin(invertedData)};
   else
-    return {max : computeMax(invertedData, -averageAngle), min : computeMin(data, averageAngle)};
+    return {max : computeMax(invertedData), min : computeMin(data)};
 }
-
 
 function computeMax(data) {
   let limit;
   let locals = [];
   const globalMax = Math.max(...data.map(obj => obj.avgAngle));
+  console.log(globalMax);
   for (let i = 0; i < data.length; i++) {
     if ((data[i].avgAngle >= globalMax / 2)) { 
       var lastIndex = locals[locals.length - 1];
