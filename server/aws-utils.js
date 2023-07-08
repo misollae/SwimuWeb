@@ -7,9 +7,9 @@ import {
 import { s3Client } from "../libs/aws-client.js";
 
 /*** Saving to Cloud ***/
-async function saveToServer(filename, content) {
+async function saveToServer(bucketname, filename, content) {
   const params = {
-    Bucket: "swimu",
+    Bucket: bucketname,
     Key: filename,
     Body: content,
   };

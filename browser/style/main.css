@@ -1,7 +1,10 @@
 
 html {
     overflow: -moz-scrollbars-vertical; 
-    overflow: hidden;
+}
+
+.bar-chart {
+  width: 10px;
 }
 
 body {

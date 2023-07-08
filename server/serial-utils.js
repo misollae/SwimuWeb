@@ -1,5 +1,7 @@
 import { SerialPort } from "serialport";
 import { saveToServer} from "./aws-utils.js";
+import { getNumStrokes } from "./data-utils.js";
+
 var connectionInterval;
 
 export function serialStart(){
@@ -63,6 +65,7 @@ async function checkPortConnection(portName) {
   async function transferFilesSequentiallyArduino(fileList) {
     for (const fileName of fileList) {
       try {
+        console.log("Hi");
         await sendSerialFileRequest(fileName);
         console.log("File transferred successfully: " + fileName);
       } catch (error) {
@@ -74,6 +77,7 @@ async function checkPortConnection(portName) {
   }
   
   function sendSerialFileRequest(fileName) {
+    console.log("ask for: " + fileName);
     return new Promise((resolve, reject) => {
       serialPort.removeAllListeners();
   
@@ -86,7 +90,10 @@ async function checkPortConnection(portName) {
           serialPort.addListener("data", function (data) {
             let message = data.toString();
             if (message.includes("End of file")) {
-              saveToServer(fileName.replace(/\//g, "") + ".txt", content);
+              let formattedContent = formatContent(content)
+              saveToServer("swimu-raw", fileName.replace(/\//g, "") + ".txt", content);
+              console.log(getNumStrokes(formattedContent));
+              saveToServer("swimu-treated", fileName.replace(/\//g, "") + ".txt", JSON.stringify(getNumStrokes(formattedContent)));
               serialPort.removeAllListeners();
               resolve();
             } else {
@@ -97,3 +104,20 @@ async function checkPortConnection(portName) {
       });
     });
   }  
+
+  function formatContent(data) {
+    const values = data.split(";").join(" ").split(" ").filter(Boolean);
+    const numRows = values.length / 4;
+    const result = [];
+  
+    for (let i = 1; i < numRows; i++) {
+      const obj = {
+        timestamp: values[i * 4],
+        roll: String(Math.abs(parseFloat(values[i * 4 + 1]))),
+        pitch: values[i * 4 + 2],
+        yaw: values[i * 4 + 3],
+      };
+      result.push(obj);
+    }
+    return result;
+  }

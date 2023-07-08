@@ -33,7 +33,6 @@ server.post("/SwimuWeb/ShowSession", jsonParser, async (req, res) => {
     console.log("Error", err);
     res.status(500).send("An error occurred while retrieving the file.");
   }
-
 });
 
 server.delete("/SwimuWeb/DeleteFile", jsonParser, async (req, res) => {

@@ -68,6 +68,7 @@ function displayCurrentFile() {
     `;
 
     requestSessionWithRetry(fileList[currentIndex]); 
+    getSessionStatistics(fileList[currentIndex]);
 }
 
 function selectFile(index) {
@@ -101,6 +102,64 @@ function formatFileDate(fileDate) {
   return fileDate.toLocaleDateString("en-US", options);
 }
 
+function getSessionStatistics(filename) {
+  const endpoint = "http://localhost:3000/SwimuWeb/ShowSession";
+  const options = {
+    method: "POST",
+    headers: {
+      Accept: "application.json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ filename: filename }),
+  };
+  retryFetch(endpoint, options).then(data => {
+
+    totalStrokes = data.numStrokes;
+    totalLaps = (data.numLaps == 0) ? 1 : data.numLaps;
+    totalMeters  = totalLaps * 20;
+    lapsInfo     = data.lapInfo;
+    totalTime    = data.totalTime;
+    avgTime      = data.avgTime;
+
+    document.getElementById("totalStrokes").textContent = totalStrokes;
+    document.getElementById("totalLaps").textContent = totalLaps;
+    document.getElementById("totalMeters").textContent = totalMeters + "m";
+    document.getElementById("totalTime").textContent = convertToHHMM(totalTime) + "h";
+    document.getElementById("avgTime").textContent = convertToMMSS(avgTime) + "m";
+
+    swolfchart.data.parse(lapsInfo);
+  });
+}
+
+function convertToHHMM(seconds) {
+  if (seconds < 60) {
+    return "<00:01";
+  }
+
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+  const remainingMinutes = minutes % 60;
+
+  const formattedHours = hours.toString().padStart(2, '0');
+  const formattedMinutes = remainingMinutes.toString().padStart(2, '0');
+
+  return `${formattedHours}:${formattedMinutes}`;
+}
+
+function convertToMMSS(seconds) {
+  if (seconds < 1) {
+    return "<00:01";
+  }
+
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = Math.round(seconds % 60);
+
+  const formattedMinutes = minutes.toString().padStart(2, '0');
+  const formattedSeconds = remainingSeconds.toString().padStart(2, '0');
+
+  return `${formattedMinutes}:${formattedSeconds}`;
+}
+
 function requestSessionWithRetry(filename) {
   const endpoint = "http://localhost:3000/SwimuWeb/ShowSession";
   const options = {
@@ -120,7 +179,7 @@ function requestSessionWithRetry(filename) {
       avgAngles.push(item.avgAngle);
     }
 
-    document.getElementById("totalStrokes").textContent = data.numStrokes;
+   // document.getElementById("totalStrokes").textContent = data.numStrokes;
 
 
     new Chart(document.getElementById("bar-chart"), {
@@ -167,36 +226,18 @@ function deleteFileWithRetry() {
 }
 
 const swolfData = [
-  { lap: "1",  "SWOLF Score": 23, swimStyle: "Backstroke" },
-  { lap: "2",  "SWOLF Score": 23, swimStyle: "Backstroke" },
-  { lap: "3",  "SWOLF Score": 23, swimStyle: "Backstroke" },
-  { lap: "4",  "SWOLF Score": 23, swimStyle: "Backstroke" },
-  { lap: "5",  "SWOLF Score": 36, swimStyle: "Backstroke" },
-  { lap: "6",  "SWOLF Score": 28, swimStyle: "Backstroke" },
-  { lap: "7",  "SWOLF Score": 24, swimStyle: "Backstroke" },
-  { lap: "8",  "SWOLF Score": 26, swimStyle: "Backstroke" },
-  { lap: "9",  "SWOLF Score": 50, swimStyle: "Backstroke" },
-  { lap: "10", "SWOLF Score": 27, swimStyle: "Backstroke" },
+  { lap: "1",  "SWOLF Score": 35, swimStyle: "Backstroke" },
+  { lap: "2",  "SWOLF Score": 37, swimStyle: "Backstroke" },
+  { lap: "3",  "SWOLF Score": 33, swimStyle: "Backstroke" },
+  { lap: "4",  "SWOLF Score": 35, swimStyle: "Backstroke" },
+  { lap: "5",  "SWOLF Score": 38, swimStyle: "Backstroke" },
+  { lap: "6",  "SWOLF Score": 38, swimStyle: "Backstroke" },
+  { lap: "7",  "SWOLF Score": 36, swimStyle: "Backstroke" },
+  { lap: "8",  "SWOLF Score": 36, swimStyle: "Backstroke" },
+  { lap: "9",  "SWOLF Score": 30, swimStyle: "Backstroke" },
+  { lap: "10", "SWOLF Score": 37, swimStyle: "Backstroke" },
   { lap: "11", "SWOLF Score": 33, swimStyle: "Backstroke" },
   { lap: "12", "SWOLF Score": 30, swimStyle: "Backstroke" },
-  { lap: "13", "SWOLF Score": 41, swimStyle: "Backstroke" },
-  { lap: "14", "SWOLF Score": 22, swimStyle: "Backstroke" },
-  { lap: "15", "SWOLF Score": 14, swimStyle: "Backstroke" },
-  { lap: "16", "SWOLF Score": 39, swimStyle: "Backstroke" },
-  { lap: "17", "SWOLF Score": 25, swimStyle: "Backstroke" },
-  { lap: "18", "SWOLF Score": 17, swimStyle: "Backstroke" },
-  { lap: "19", "SWOLF Score": 12, swimStyle: "Backstroke" },
-  { lap: "20", "SWOLF Score": 46, swimStyle: "Backstroke" },
-  { lap: "21", "SWOLF Score": 32, swimStyle: "Backstroke" },
-  { lap: "22", "SWOLF Score": 20, swimStyle: "Butterfly" },
-  { lap: "23", "SWOLF Score": 37, swimStyle: "Butterfly" },
-  { lap: "24", "SWOLF Score": 29, swimStyle: "Butterfly" },
-  { lap: "25", "SWOLF Score": 21, swimStyle: "Backstroke" },
-  { lap: "26", "SWOLF Score": 13, swimStyle: "Backstroke" },
-  { lap: "27", "SWOLF Score": 45, swimStyle: "Backstroke" },
-  { lap: "28", "SWOLF Score": 31, swimStyle: "Backstroke" },
-  { lap: "29", "SWOLF Score": 24, swimStyle: "Backstroke" },
-  { lap: "30", "SWOLF Score": 15, swimStyle: "Butterfly" },
   
 ];
 
@@ -263,6 +304,6 @@ function getStylesChart() {
 }
 
 const swolfchart = new dhx.Chart("swolfChart", getSWOLFGraph());
-swolfchart.data.parse(swolfData);
+//swolfchart.data.parse(swolfData);
 const chart = new dhx.Chart("timePerStyleChart", getStylesChart());
 chart.data.parse(pieData);

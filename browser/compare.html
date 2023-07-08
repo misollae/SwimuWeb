@@ -29,7 +29,7 @@
   <header>
     <nav>
       <a href="index.html" id="logo">
-        <image src="../images/logo.png" height="45px" />
+        <image src="../images/oglogo.png" height="45px" />
       </a>
       <i class="fas fa-bars" id="ham-menu"></i>
       <ul id="nav-bar">
@@ -41,9 +41,6 @@
         </li>
         <li>
           <a href="help.html">Help</a>
-        </li>
-        <li>
-          <a href="about.html">About</a>
         </li>
       </ul>
     </nav>
@@ -61,11 +58,35 @@
 
     <div class="container" style="display: flex; height: 100px;">
       <div class="graphDiv">
-        <h2 class="graphTitle">SWOLF Comparision Through Sessions:</h2>
+        <h2 class="graphTitle">SWOLF Comparision Through Sessions</h2>
         <div id="compareChart" style="padding-left: 20px; padding-right: 20px;"></div>
       </div>
-      <div class="rankingDiv" style="flex-grow: 1; background: blue;">
-        Right Div
+      <div class="rankingDiv">
+        <h2 class="graphTitle">Best Sessions SWOLF</h2>
+        <div class="leaderboard">
+          <ol>
+              <li>
+                  <mark>July 1, 2023 at 6:26 PM</mark>
+                  <small>35</small>
+              </li>
+              <li>
+                  <mark>June 28, 2023 at 10:53 PM</mark>
+                  <small>31</small>
+              </li>
+              <li>
+                  <mark>June 19, 2023 at 7:25 PM</mark>
+                  <small>29</small>
+              </li>
+              <li>
+                  <mark>May 30, 2023 at 8:08 AM</mark>
+                  <small>24</small>
+              </li>
+              <li>
+                  <mark>June 1, 2023 at 13:04 PM</mark>
+                  <small>33</small>
+              </li>
+          </ol>
+      </div>
       </div>
     </div>
 
@@ -100,56 +121,7 @@
     </script>
 
     <script>
-      const companiesData = [
-        { month: "02", "Lowest SWOLF": 20, "Average SWOLF": 52, "Highest SWOLF": 72 },
-        { month: "03", "Lowest SWOLF": 5,  "Average SWOLF": 33, "Highest SWOLF": 90 },
-        { month: "04", "Lowest SWOLF": 55, "Average SWOLF": 30, "Highest SWOLF": 81 },
-        { month: "05", "Lowest SWOLF": 30, "Average SWOLF": 11, "Highest SWOLF": 62 },
-        { month: "06", "Lowest SWOLF": 27, "Average SWOLF": 14, "Highest SWOLF": 68 },
-        { month: "07", "Lowest SWOLF": 32, "Average SWOLF": 31, "Highest SWOLF": 64 },
-      ];
 
-      function getConfig() {
-        return {
-          type: "bar",
-          css: "dhx_widget--bg_white",
-          scales: {
-            "bottom": {
-              text: "month"
-            },
-            "left": {}
-          },
-          series: [
-            {
-              id: "A",
-              value: "Lowest SWOLF",
-              fill: "#394E79",
-              color: "none"
-            },
-            {
-              id: "B",
-              value: "Average SWOLF",
-              fill: "#5E83BA",
-              color: "none"
-            },
-            {
-              id: "C",
-              value: "Highest SWOLF",
-              fill: "#C2D2E9",
-              color: "none"
-            }
-          ],
-          legend: {
-            series: ["A", "B", "C"],
-            form: "rect",
-            valign: "top",
-            halign: "right"
-          }
-        }
-      }
-
-      const chart = new dhx.Chart("compareChart", getConfig());
-      chart.data.parse(companiesData);
     </script>
 
 </body>

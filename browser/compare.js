@@ -1,3 +1,5 @@
+let selectedOptions = {};
+
 function retryFetch(endpoint, options, retries = 20, delay = 5000) {
   let responseReceived = false;
 
@@ -54,8 +56,6 @@ function listSessionsWithRetry() {
       fileList.forEach((file, index) => {
         const row = document.createElement("tr");
 
-        
-
         const labelCell = document.createElement("td");
         const label = document.createTextNode(formatFileDate(parseFileDate(file)));
         labelCell.appendChild(label);
@@ -66,14 +66,25 @@ function listSessionsWithRetry() {
         checkbox.type = "checkbox";
         checkbox.name = "session";
         checkbox.value = file;
-      // checkbox.addEventListener("click", requestSessionWithRetry(file));
+        checkbox.addEventListener("click", function() {
+          if (checkbox.checked) {
+            if (!selectedOptions.hasOwnProperty(file)) {
+              requestSessionWithRetry(file);
+            }
+          } else {
+            if (selectedOptions.hasOwnProperty(file)) {
+              delete selectedOptions[file];
+              update();
+            }
+          }
+        });
         checkboxCell.appendChild(checkbox);
         row.appendChild(checkboxCell);
-
         table.appendChild(row);
 
         if (index < 5) {
           checkbox.checked = true; 
+          requestSessionWithRetry(file);
         }
       });
     })
@@ -103,6 +114,7 @@ function formatFileDate(fileDate) {
 }
 
 function requestSessionWithRetry(filename) {
+
   const endpoint = "http://localhost:3000/SwimuWeb/ShowSession";
   const options = {
     method: "POST",
@@ -114,35 +126,80 @@ function requestSessionWithRetry(filename) {
   };
   retryFetch(endpoint, options)
     .then((data) => {
-      const timestamps = [];
-      const avgAngles = [];
-
-      for (const item of data.averageAngles) {
-        timestamps.push(item.timestamp);
-        avgAngles.push(item.avgAngle);
-      }
-
-      document.getElementById("totalStrokes").textContent = data.numStrokes;
-
-      new Chart(document.getElementById("bar-chart"), {
-        type: "bar",
-        data: {
-          labels: timestamps,
-          datasets: [
-            {
-              label: "Population (millions)",
-              data: avgAngles,
-            },
-          ],
-        },
-        options: {
-          legend: { display: false },
-          title: {
-            display: true,
-            text: "U.S population",
-          },
-        },
-      });
+      selectedOptions[filename] = data;
+      update();
     })
     .catch((error) => console.log(error));
+}
+
+
+const companiesData = [
+  { month: "02", "Lowest SWOLF": 20, "Average SWOLF": 52, "Highest SWOLF": 72 },
+  { month: "03", "Lowest SWOLF": 5,  "Average SWOLF": 33, "Highest SWOLF": 90 },
+  { month: "04", "Lowest SWOLF": 55, "Average SWOLF": 30, "Highest SWOLF": 81 },
+  { month: "05", "Lowest SWOLF": 30, "Average SWOLF": 11, "Highest SWOLF": 62 },
+  { month: "06", "Lowest SWOLF": 27, "Average SWOLF": 14, "Highest SWOLF": 68 },
+  { month: "07", "Lowest SWOLF": 32, "Average SWOLF": 31, "Highest SWOLF": 64 },
+];
+
+
+function getConfig() {
+  return {
+    type: "bar",
+    css: "dhx_widget--bg_white",
+    scales: {
+      "bottom": {
+        text: "month"
+      },
+      "left": {}
+    },
+    series: [
+      {
+        id: "A",
+        value: "Lowest SWOLF",
+        fill: "#394E79",
+        color: "none"
+      },
+      {
+        id: "B",
+        value: "Average SWOLF",
+        fill: "#5E83BA",
+        color: "none"
+      },
+      {
+        id: "C",
+        value: "Highest SWOLF",
+        fill: "#C2D2E9",
+        color: "none"
+      }
+    ],
+    legend: {
+      series: ["A", "B", "C"],
+      form: "rect",
+      valign: "top",
+      halign: "right"
+    }
+  }
+}
+
+const chart = new dhx.Chart("compareChart", getConfig());
+chart.data.parse(companiesData);
+
+function update(){
+  const newData = [];
+
+  Object.entries(selectedOptions).forEach(([key, value]) => {
+    let session = key;
+    let study   = value.swolfStudy;
+  
+    newData.push({
+      month: session,
+      "Lowest SWOLF": value.swolfStudy.lowest,
+      "Average SWOLF": value.swolfStudy.average,
+      "Highest SWOLF": value.swolfStudy.highest,
+    });
+
+  });
+
+  chart.data.parse(newData);
 }
