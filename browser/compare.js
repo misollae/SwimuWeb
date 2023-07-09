@@ -67,6 +67,12 @@ function listSessionsWithRetry() {
         checkbox.name = "session";
         checkbox.value = file;
         checkbox.addEventListener("click", function() {
+
+          if (Object.keys(selectedOptions).length >= 5) {
+            checkbox.checked = false;
+            return;
+          }
+
           if (checkbox.checked) {
             if (!selectedOptions.hasOwnProperty(file)) {
               requestSessionWithRetry(file);
@@ -187,19 +193,44 @@ chart.data.parse(companiesData);
 
 function update(){
   const newData = [];
+  var leaderboardDiv = document.querySelector('.leaderboard');
+  var content = "";
+  leaderboardDiv.innerHTML = "";
+
+  const keySWOLF = [];
 
   Object.entries(selectedOptions).forEach(([key, value]) => {
-    let session = key;
-    let study   = value.swolfStudy;
+    let session = formatFileDate(parseFileDate(key));
+    const parts = session.split(" at ");
+    const datePart = parts[0];
+    const timePart = parts[1].split(" ")[0];
+    const extractedDate = `${datePart} ${timePart}`;
+
+    keySWOLF.push({ session: session, average: value.swolfStudy.average });
+    //console.log(keySWOLF)
   
     newData.push({
-      month: session,
-      "Lowest SWOLF": value.swolfStudy.lowest,
-      "Average SWOLF": value.swolfStudy.average,
-      "Highest SWOLF": value.swolfStudy.highest,
+      month: extractedDate,
+      "Lowest SWOLF": Math.round(value.swolfStudy.lowest),
+      "Average SWOLF": Math.round(value.swolfStudy.average),
+      "Highest SWOLF": Math.round(value.swolfStudy.highest),
     });
-
+    
   });
 
+  keySWOLF.sort((a, b) => a.average - b.average);
+
+  keySWOLF.forEach(entry => {
+    const value = keySWOLF[key];
+    var listItem = `
+    <li>
+      <mark>${entry.session}</mark>
+      <small>${Math.round(entry.average)}</small>
+    </li>
+    `;
+    content += listItem;
+  })
+
+  leaderboardDiv.innerHTML = "<ol>" + content + "</ol>";
   chart.data.parse(newData);
 }

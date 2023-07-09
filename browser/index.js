@@ -124,8 +124,8 @@ function getSessionStatistics(filename) {
     document.getElementById("totalStrokes").textContent = totalStrokes;
     document.getElementById("totalLaps").textContent = totalLaps;
     document.getElementById("totalMeters").textContent = totalMeters + "m";
-    document.getElementById("totalTime").textContent = convertToHHMM(totalTime) + "h";
-    document.getElementById("avgTime").textContent = convertToMMSS(avgTime) + "m";
+    document.getElementById("totalTime").textContent = formatTime(totalTime);
+    document.getElementById("avgTime").textContent = formatTime(avgTime);
 
     swolfchart.data.parse(lapsInfo);
   });
@@ -144,6 +144,30 @@ function convertToHHMM(seconds) {
   const formattedMinutes = remainingMinutes.toString().padStart(2, '0');
 
   return `${formattedHours}:${formattedMinutes}`;
+}
+
+function formatTime(seconds) {
+  seconds = Math.round(seconds);
+
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const remainingSeconds = seconds % 60;
+
+  let result = "";
+
+  if (hours > 0) {
+    result += hours + "h ";
+  }
+
+  if (minutes > 0) {
+    result += minutes + "m ";
+  }
+
+  if (remainingSeconds > 0 || result === "") {
+    result += remainingSeconds + "s";
+  }
+
+  return result.trim();
 }
 
 function convertToMMSS(seconds) {
@@ -236,9 +260,6 @@ const swolfData = [
   { lap: "8",  "SWOLF Score": 36, swimStyle: "Backstroke" },
   { lap: "9",  "SWOLF Score": 30, swimStyle: "Backstroke" },
   { lap: "10", "SWOLF Score": 37, swimStyle: "Backstroke" },
-  { lap: "11", "SWOLF Score": 33, swimStyle: "Backstroke" },
-  { lap: "12", "SWOLF Score": 30, swimStyle: "Backstroke" },
-  
 ];
 
 function getSWOLFGraph() {

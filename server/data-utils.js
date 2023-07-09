@@ -43,8 +43,7 @@ export function getNumStrokes(data) {
     lowest: Math.min(...swolfPerLap)
   };
 
-  return { averageAngles : averageAngles, 
-           numStrokes: numStrokes, 
+  return { numStrokes: numStrokes, 
            totalTime: getTotalTime(averageAngles), 
            avgTime: avgLapTime, 
            numLaps: lapStarts.length - 1,

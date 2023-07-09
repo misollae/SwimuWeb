@@ -25,8 +25,8 @@ server.get("/SwimuWeb/SessionList", jsonParser, async (req, res) => {
 
 server.post("/SwimuWeb/ShowSession", jsonParser, async (req, res) => {
   try {
-    const values = await getFromServer(req.body.filename);
-    res.setHeader("Content-Type", "application/json");    
+    const values = await getFromServer("swimu", req.body.filename);
+    res.setHeader("Content-Type", "application/json");  
     const numStrokes = getNumStrokes(values);
     res.send(JSON.stringify(numStrokes));
   } catch (err) {

@@ -40,15 +40,16 @@ async function streamToString(stream) {
   });
 }
 
-async function getFromServer(filename) {
+async function getFromServer(bucketname, filename) {
   const params = {
-    Bucket: "swimu",
+    Bucket: bucketname,
     Key: filename,
   };
 
   try {
     const response = await s3Client.send(new GetObjectCommand(params));
     const fileContent = await streamToString(response.Body);
+    const reply = formatContent(fileContent);
     return formatContent(fileContent);
   } catch (err) {
     console.log("Error", err);
